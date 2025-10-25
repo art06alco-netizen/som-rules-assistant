@@ -10,31 +10,26 @@ from rag_cloud import chat_with_context_openai
 
 # Use OpenAI embeddings via LangChain for cloud queries.  This must match the
 # embedding model used during ingestion.
-# Prefer the standalone langchain-ollama package for Ollama embeddings.  If
-# langchain-ollama isn't installed, fall back to the (deprecated) community
-# embedding class so that the app still works.  Users can install
-# langchain-ollama via `pip install -U langchain-ollama`.
-try:
-    from langchain_ollama import OllamaEmbeddings  # type: ignore[import]
-except ImportError:
-    from langchain_community.embeddings import OllamaEmbeddings
+# Import only the OpenAI embeddings.  We rely solely on OpenAI for
+# embedding generation in the cloud to avoid any dependence on a
+# local Ollama server.  Override the model via the OPENAI_EMBED_MODEL
+# environment variable if needed.
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_chroma import Chroma  # type: ignore[import]
 
-# Determine which embedding model to use.  Try Ollama first (if an Ollama
-# service is running inside the container) and fall back to OpenAI.  The
-# embedding model must match the one used in ingest.py; Ollama uses
-# "nomic-embed-text" and OpenAI uses "text-embedding-3-small" by default.
-def get_embeddings():
-    try:
-        ef = OllamaEmbeddings(model=os.environ.get("EMBED_MODEL", "nomic-embed-text"))
-        # quick test call to ensure model availability
-        _ = ef.embed_query("test")
-        return ef
-    except Exception:
-        # fallback to OpenAI embeddings
-        embed_model = os.environ.get("OPENAI_EMBED_MODEL", "text-embedding-3-small")
-        return OpenAIEmbeddings(model=embed_model)
+# Determine which embedding model to use.  We always select an OpenAI
+# embedding model in the cloud environment.  The model must match
+# the one used during ingestion; by default we use
+# "text-embedding-3-small".
+def get_embeddings() -> OpenAIEmbeddings:
+    """
+    Return an OpenAI embeddings instance for the cloud app.  This ensures
+    that both ingestion and retrieval use the same embedding model and
+    avoids any dependence on Ollama.  The embedding model can be
+    overridden via the OPENAI_EMBED_MODEL environment variable.
+    """
+    embed_model = os.environ.get("OPENAI_EMBED_MODEL", "text-embedding-3-small")
+    return OpenAIEmbeddings(model=embed_model)
 
 # Instantiate the embedding function once so it can be reused for all queries.
 embedding_function = get_embeddings()

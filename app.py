@@ -4,7 +4,9 @@ os.environ["OPENTELEMETRY_SDK_DISABLED"] = "true"
 import streamlit as st
 from chromadb.config import Settings
 from typing import List, Dict, Any
-from rag import chat_with_context
+# Use the OpenAI-based chat function for local answers.  We import from
+# rag_cloud to ensure the same chat mechanism across local and cloud environments.
+from rag_cloud import chat_with_context_openai as chat_with_context
 
 # Import the LangChain Chroma vector store and embeddings so that retrieval
 # uses the same interface as ingestion.  This avoids mismatches between
@@ -14,14 +16,9 @@ from rag import chat_with_context
 # need to install it with `pip install -U langchain-chroma`.
 from langchain_chroma import Chroma  # type: ignore[import]
 
-# Prefer the standalone langchain-ollama package for Ollama embeddings.  If
-# langchain-ollama isn't installed, fall back to the (deprecated) community
-# embedding class so that the app still works.  Users can install
-# langchain-ollama via `pip install -U langchain-ollama`.
-try:
-    from langchain_ollama import OllamaEmbeddings  # type: ignore[import]
-except ImportError:
-    from langchain_community.embeddings import OllamaEmbeddings
+# Import only the OpenAI embeddings.  By relying solely on OpenAI for
+# embeddings, we avoid any dependence on a local Ollama server and ensure
+# consistent embedding dimensions between ingestion and retrieval.
 from langchain_community.embeddings import OpenAIEmbeddings
 
 # Use absolute paths for the database directory so that the app loads the index
@@ -48,18 +45,14 @@ with st.sidebar:
     top_k = st.slider("Number of results to retrieve", 1, 8, 4)
     temperature = st.slider("Response creativity", 0.0, 1.0, 0.2, 0.05)
 
-def get_embeddings():
-    """Return an embeddings instance matching ingestion.
-
-    Prefer Ollama embeddings when available and fall back to OpenAI.
+def get_embeddings() -> OpenAIEmbeddings:
     """
-    try:
-        ef = OllamaEmbeddings(model="nomic-embed-text")
-        # quick sanity check
-        _ = ef.embed_query("test")
-        return ef
-    except Exception:
-        return OpenAIEmbeddings()
+    Return an OpenAI embeddings instance.  We always use the OpenAI embedding
+    model for retrieval to avoid mismatches with ingestion.  The embedding
+    model can be overridden via the OPENAI_EMBED_MODEL environment variable.
+    """
+    embed_model = os.environ.get("OPENAI_EMBED_MODEL", "text-embedding-3-small")
+    return OpenAIEmbeddings(model=embed_model)
 
 # Initialize the persistent Chroma vector store.  Use the same collection
 # name and embedding function as in ingest.py.  Disable anonymous telemetry

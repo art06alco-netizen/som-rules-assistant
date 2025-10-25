@@ -11,14 +11,10 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 # langchain_community.  You need to install it with `pip install -U langchain-chroma`.
 from langchain_chroma import Chroma  # type: ignore[import]
 from chromadb.config import Settings
-# Prefer the standalone langchain-ollama package for Ollama embeddings.  If
-# langchain-ollama isn't installed, fall back to the (deprecated) community
-# embedding class so that ingestion still works.  Users can install
-# langchain-ollama via `pip install -U langchain-ollama`.
-try:
-    from langchain_ollama import OllamaEmbeddings  # type: ignore[import]
-except ImportError:
-    from langchain_community.embeddings import OllamaEmbeddings
+# Import only the OpenAI embeddings.  By relying solely on OpenAI for
+# embedding generation we eliminate the need for a running Ollama server
+# and avoid mixing different embedding dimensions.  The embedding model
+# can be overridden via the OPENAI_EMBED_MODEL environment variable.
 from langchain_community.embeddings import OpenAIEmbeddings
 
 # === CONFIG ===
@@ -65,19 +61,19 @@ def split_docs(docs):
 
 # === SETUP EMBEDDINGS ===
 def get_embeddings():
-    try:
-        print("[embed] Trying Ollama (local)...")
-        ef = OllamaEmbeddings(model="nomic-embed-text")
-        # quick test call
-        _ = ef.embed_query("test")
-        print("[embed] ✅ Ollama embeddings active.")
-        return ef
-    except Exception as e:
-        print(f"[embed] ⚠️ Ollama unavailable: {e}")
-        if "OPENAI_API_KEY" not in os.environ:
-            raise RuntimeError("No Ollama or OpenAI available. Set OPENAI_API_KEY or start Ollama.")
-        print("[embed] Falling back to OpenAI embeddings...")
-        return OpenAIEmbeddings()
+    """
+    Create and return an OpenAI embeddings object.  We rely solely on the
+    OpenAI embedding API so that the vector dimensionality is consistent
+    across ingestion and retrieval.  The default model can be overridden
+    via the OPENAI_EMBED_MODEL environment variable.
+
+    Raises:
+        RuntimeError: if the OPENAI_API_KEY environment variable is not set.
+    """
+    if "OPENAI_API_KEY" not in os.environ:
+        raise RuntimeError("OPENAI_API_KEY must be set to generate embeddings.")
+    embed_model = os.environ.get("OPENAI_EMBED_MODEL", "text-embedding-3-small")
+    return OpenAIEmbeddings(model=embed_model)
 
 # === BUILD DB ===
 def build_db(chunks):

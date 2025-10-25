@@ -14,8 +14,7 @@ langchain-openai>=1.0.0
 tiktoken
 docx2txt
 
-# LangChain Ollama module for the updated OllamaEmbeddings class
-langchain-ollama>=0.0.1
+# Removed langchain-ollama because we now rely solely on OpenAI embeddings
 
 # LangChain Chroma module for the updated Chroma class
 langchain-chroma>=0.0.1
