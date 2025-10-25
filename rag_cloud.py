@@ -1,7 +1,7 @@
 ﻿from typing import List, Dict, Any
 import os
+import openai
 from openai import OpenAI
-from openai.error import RateLimitError
 
 MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 
@@ -24,7 +24,7 @@ def chat_with_context_openai(prompt: str, context_chunks: List[Dict[str, Any]], 
             messages=[{"role":"system","content":system_msg},{"role":"user","content":user_msg}]
         )
         return resp.choices[0].message.content
-    except RateLimitError:
+    except openai.RateLimitError:
         # Return a helpful message if the API key has insufficient quota.
         return "⚠️ OpenAI API quota exceeded. Please check your plan and billing details."
     except Exception as e:
