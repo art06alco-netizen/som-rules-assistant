@@ -1,0 +1,8 @@
+﻿[build]
+builder = "NIXPACKS"
+
+[deploy]
+# On Railway, build the vector store on first deploy if it doesn't exist.  The
+# `bash -c` wrapper checks for the `db` directory and runs ingest.py only when
+# needed.  Afterwards it starts the Streamlit cloud app on the assigned port.
+startCommand = "bash -c \"if [ ! -d db ]; then python ingest.py; fi && streamlit run app_cloud.py --server.port $PORT --server.address 0.0.0.0\""

@@ -1,0 +1,21 @@
+
+chromadb>=0.6.3,<1.0.0
+langchain-text-splitters>=0.3.0
+python-docx>=1.1.0
+streamlit
+openai>=1.0.0
+
+# LangChain community module provides document loaders and embeddings used in ingest.py
+langchain-community>=0.0.20
+# LangChain integration with OpenAI, required for OpenAIEmbeddings in app_cloud.py
+langchain-openai>=1.0.0
+
+# Additional dependencies
+tiktoken
+docx2txt
+
+# LangChain Ollama module for the updated OllamaEmbeddings class
+langchain-ollama>=0.0.1
+
+# LangChain Chroma module for the updated Chroma class
+langchain-chroma>=0.0.1

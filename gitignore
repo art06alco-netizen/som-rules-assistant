@@ -1,0 +1,15 @@
+# Ignore persistent database and environment files
+db/
+*.sqlite3
+
+# Ignore Python cache and virtual environments
+__pycache__/
+.venv/
+.env
+.env.*
+
+# Ignore API key files or secrets
+$envOPENAI_API_KEY=*
+
+# Ignore node and compiled files
+node_modules/
