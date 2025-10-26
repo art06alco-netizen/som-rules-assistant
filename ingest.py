@@ -40,8 +40,8 @@ COLLECTION_NAME = "som"
 # this file.  The double asterisk allows recursive search in subfolders.
 DOCS_PATH = str(BASE_DIR / "docs" / "**" / "*.docx")
 
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 100
+CHUNK_SIZE = 700
+CHUNK_OVERLAP = 300
 
 # === LOAD DOCS ===
 def load_docs() -> List:
