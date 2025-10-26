@@ -9,7 +9,6 @@ os.environ["OPENTELEMETRY_SDK_DISABLED"] = "true"
 # key will be used if OPENAI_API_KEY is not already defined in the
 # environment.  In a real deployment you should set the API key via
 # environment variables rather than hard-coding it in source code.
-os.environ.setdefault("OPENAI_API_KEY", "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")
 from chromadb.config import Settings
 from typing import List, Dict, Any
 from rag_cloud import chat_with_context_openai

@@ -6,7 +6,6 @@ os.environ["OPENTELEMETRY_SDK_DISABLED"] = "true"
 # have already set OPENAI_API_KEY in your environment, that value will be
 # used instead of the hard-coded default.  Do not expose this key publicly
 # in production code.
-os.environ.setdefault("OPENAI_API_KEY", "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")
 import streamlit as st
 from chromadb.config import Settings
 from typing import List, Dict, Any

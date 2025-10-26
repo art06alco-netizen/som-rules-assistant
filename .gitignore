@@ -13,3 +13,8 @@ $envOPENAI_API_KEY=*
 
 # Ignore node and compiled files
 node_modules/
+
+# ignore the Chroma DB and SQLite files
+db/
+*.sqlite3
+

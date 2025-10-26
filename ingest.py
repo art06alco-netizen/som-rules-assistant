@@ -8,7 +8,6 @@ os.environ["OPENTELEMETRY_SDK_DISABLED"] = "true"
 # NOTE: Do not expose this key publicly or commit it to version control in
 # real-world projects.  It is included here solely so that ingestion can
 # proceed without requiring external configuration.
-os.environ.setdefault("OPENAI_API_KEY", "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")
 import time
 from typing import List
 from langchain_community.document_loaders import Docx2txtLoader
