@@ -1,6 +1,4 @@
-# Ignore persistent database and environment files
-db/
-*.sqlite3
+
 
 # Ignore Python cache and virtual environments
 __pycache__/
@@ -13,8 +11,4 @@ $envOPENAI_API_KEY=*
 
 # Ignore node and compiled files
 node_modules/
-
-# ignore the Chroma DB and SQLite files
-db/
-*.sqlite3
 
