@@ -2,10 +2,9 @@
 builder = "NIXPACKS"
 
 [deploy]
-# On Railway, build the vector store on first deploy if it doesn't exist.  The
-# `bash -c` wrapper checks for the `db` directory and runs ingest.py only when
-# needed.  Afterwards it starts the Streamlit cloud app on the assigned port.
-[deploy]
+# On Railway, build the vector store on first deploy if it doesn't exist.
+# The bash -c wrapper checks for the index file and runs ingest.py only when needed.
 startCommand = """
   bash -c "if [ ! -f db/chroma.sqlite3 ]; then python ingest.py; fi && streamlit run app_cloud.py --server.port $PORT --server.address 0.0.0.0"
 """
+
