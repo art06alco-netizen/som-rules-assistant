@@ -3,11 +3,13 @@ import glob
 # Disable OpenTelemetry instrumentation to suppress noisy telemetry events.
 os.environ["OPENTELEMETRY_SDK_DISABLED"] = "true"
 
-# Set a default OpenAI API key for embedding generation.  This will be used
-# whenever the OPENAI_API_KEY environment variable is not already defined.
-# NOTE: Do not expose this key publicly or commit it to version control in
-# real-world projects.  It is included here solely so that ingestion can
-# proceed without requiring external configuration.
+
+# IMPORTANT: Do not hard-code secrets such as API keys in this repository.
+# To run ingestion successfully, set the OPENAI_API_KEY environment variable
+# before executing this script.  For example, in PowerShell:
+#   $env:OPENAI_API_KEY = "your-key"
+# or in Bash:
+#   export OPENAI_API_KEY="your-key"
 import time
 from typing import List
 from langchain_community.document_loaders import Docx2txtLoader
@@ -40,8 +42,12 @@ COLLECTION_NAME = "som"
 # this file.  The double asterisk allows recursive search in subfolders.
 DOCS_PATH = str(BASE_DIR / "docs" / "**" / "*.docx")
 
-CHUNK_SIZE = 700
-CHUNK_OVERLAP = 300
+# Adjust the chunk size and overlap.  Smaller chunks with a larger
+# overlap help the retrieval model capture more nuance and reduce
+# information being "lost in the middle" of long contexts.  See
+# LangChain docs and RAG best practices for details.
+CHUNK_SIZE = 800
+CHUNK_OVERLAP = 200
 
 # === LOAD DOCS ===
 def load_docs() -> List:

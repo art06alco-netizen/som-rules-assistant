@@ -18,3 +18,10 @@ docx2txt
 
 # LangChain Chroma module for the updated Chroma class
 langchain-chroma>=0.0.1
+
+# Cross-encoder re-ranking requires the sentence-transformers package, which
+# depends on PyTorch.  Installing sentence-transformers will pull in the
+# appropriate version of torch automatically.  See RAG improvement notes for
+# detailshttps://www.pinecone.io/learn/series/rag/rerankers/#:~:text=A%20reranking%20model%20%E2%80%94%20also,by%20relevance%20to%20our%20query.
+sentence-transformers>=2.0.0
+torch>=2.0.0
