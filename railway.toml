@@ -1,12 +1,5 @@
 ﻿[build]
 builder = "NIXPACKS"
 
-
 [deploy]
-# Always run the ingestion step before launching the Streamlit app.  When
-# deploying on Railway with a persistent volume mounted at `/app/db`, the
-# ingestion script will update the vector store on each deploy.  This avoids
-# conditional logic that might skip ingestion when the directory is present
-# but the index is missing.  After indexing the docs, Streamlit serves the
-# assistant on the assigned port.
 startCommand = 'python ingest.py && streamlit run app_cloud.py --server.port $PORT --server.address 0.0.0.0'
