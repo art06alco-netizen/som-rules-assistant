@@ -2,6 +2,4 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = 'bash -c "if [ ! -f db/chroma.sqlite3 ]; then python ingest.py; fi && streamlit run app_cloud.py --server.port $PORT --server.address 0.0.0.0"'
-
-
+startCommand = 'python ingest.py && streamlit run app_cloud.py --server.port $PORT --server.address 0.0.0.0'
